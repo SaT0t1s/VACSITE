@@ -1,1 +1,856 @@
-# VACSITE
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAC — Внедорожник на аддитивных технологиях</title>
+    <style>
+        :root {
+            --primary: #8b5cf6;      /* фиолетовый основной */
+            --primary-dark: #6d28d9; /* тёмный фиолетовый */
+            --dark: #020617;
+            --dark-soft: #0b1120;
+            --light: #f3f4f6;
+            --text: #e5e7eb;
+            --accent: #f97316;
+            --muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
+            overflow-x: hidden;
+        }
+
+        section {
+            padding: 5rem 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.6rem;
+            margin-bottom: 3rem;
+            color: #f9fafb;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            margin: 12px auto 0;
+            border-radius: 999px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(139, 92, 246, 0.25);
+            color: var(--muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+        }
+
+        nav .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.7rem 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-weight: 700;
+            color: #e5e7eb;
+            letter-spacing: 0.15em;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            position: relative;
+            padding-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #f9fafb;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        header {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 10% 0, rgba(139,92,246,0.5), transparent 55%),
+                radial-gradient(circle at 90% 0, rgba(249,115,22,0.22), transparent 60%);
+            opacity: 0.9;
+        }
+
+        .hero-grid {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            color: #f9fafb;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+            max-width: 480px;
+        }
+
+        .hero-badges {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .hero-badge {
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 26px;
+            border-radius: 999px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 14px 40px rgba(139, 92, 246, 0.45);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 45px rgba(139, 92, 246, 0.6);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid rgba(148, 163, 184, 0.6);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(15, 23, 42, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .hero-visual {
+            position: relative;
+        }
+
+        .hero-card {
+            background: radial-gradient(circle at top, #1f2937, #020617);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            transform-style: preserve-3d;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero-card img {
+            width: 100%;
+            border-radius: 18px;
+            display: block;
+        }
+
+        .hero-chip {
+            position: absolute;
+            right: -10px;
+            top: 20%;
+            padding: 10px 16px;
+            border-radius: 999px 0 0 999px;
+            background: rgba(15,23,42,0.9);
+            border: 1px solid rgba(148,163,184,0.4);
+            font-size: 0.8rem;
+            color: var(--muted);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        .card {
+            background: radial-gradient(circle at top left, rgba(139,92,246,0.28), rgba(15,23,42,0.96));
+            border-radius: 18px;
+            padding: 1.8rem;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.7);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.3s ease, background 0.3s ease;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: -40%;
+            background: radial-gradient(circle at top left, rgba(168,85,247,0.18), transparent 55%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 60px rgba(15, 23, 42, 0.9);
+            border-color: rgba(196,181,253,0.9);
+        }
+
+        .card h3 {
+            margin-bottom: 0.8rem;
+            color: #f9fafb;
+        }
+
+        .card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 18px;
+            overflow: hidden;
+            background: rgba(15,23,42,0.9);
+            border: 1px solid rgba(148,163,184,0.4);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+        }
+
+        .specs-table th,
+        .specs-table td {
+            padding: 12px 16px;
+            font-size: 0.95rem;
+        }
+
+        .specs-table th {
+            background: radial-gradient(circle at top left, rgba(139,92,246,0.75), rgba(15,23,42,1));
+            color: #e5e7eb;
+            text-align: left;
+        }
+
+        .specs-table tr:nth-child(even) {
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .specs-table tr:nth-child(odd) {
+            background: rgba(15, 23, 42, 0.75);
+        }
+
+        .specs-table tr:hover {
+            background: rgba(109,40,217,0.55);
+        }
+
+        .timeline {
+            border-left: 2px solid rgba(148, 163, 184, 0.4);
+            margin-left: 10px;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.8rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            background: radial-gradient(circle, var(--accent), var(--primary));
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.4);
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: #e5e7eb;
+            margin-bottom: 2px;
+        }
+
+        .timeline-text {
+            color: var(--muted);
+            font-size: 0.93rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(148,163,184,0.4);
+            cursor: pointer;
+            transform: translateZ(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.06);
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 45px rgba(15, 23, 42, 0.9);
+            border-color: rgba(196,181,253,0.95);
+        }
+
+        .gallery-label {
+            position: absolute;
+            left: 12px;
+            bottom: 12px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(15,23,42,0.85);
+            font-size: 0.8rem;
+            color: #e5e7eb;
+        }
+
+        .kpi {
+            display: flex;
+            align-items: baseline;
+            gap: 0.6rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fef3c7;
+        }
+
+        .kpi-label {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        footer {
+            background: #020617;
+            border-top: 1px solid rgba(148,163,184,0.3);
+            padding: 2.5rem 20px;
+            text-align: center;
+            color: var(--muted);
+            margin-top: 4rem;
+        }
+
+        footer strong {
+            color: #e5e7eb;
+        }
+
+        @media (max-width: 900px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: left;
+                gap: 2.5rem;
+                padding-top: 4rem;
+            }
+
+            header {
+                padding-top: 4.5rem;
+            }
+
+            nav .nav-inner {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero-title {
+                font-size: 2.4rem;
+            }
+
+            h2 {
+                font-size: 2.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-inner">
+            <div class="logo">VAC / 4WD</div>
+            <ul>
+                <li><a href="#about">О проекте</a></li>
+                <li><a href="#specs">Характеристики</a></li>
+                <li><a href="#process">Процесс</a></li>
+                <li><a href="#market">Маркетинг</a></li>
+                <li><a href="#eco">Экономика</a></li>
+                <li><a href="#gallery">Галерея</a></li>
+                <li><a href="#author">Автор</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header>
+        <div class="hero-bg"></div>
+        <div class="hero-grid">
+            <div>
+                <div class="tag">Творческий проект по технологии</div>
+                <h1 class="hero-title">Электрический полноприводный внедорожник VAC</h1>
+                <p class="hero-subtitle">
+                    Учебная модель 4WD‑внедорожника, созданная средствами аддитивных технологий для развития STEM‑компетенций, работы с CAD и 3D‑печатью в школе и техлицее. [file:1]
+                </p>
+                <div class="hero-badges">
+                    <div class="hero-badge">3D‑печать (FDM)</div>
+                    <div class="hero-badge">PLA+ пластик</div>
+                    <div class="hero-badge">CAD: Компас‑3D, Blender</div>
+                    <div class="hero-badge">STEM 12–18+</div>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#specs" class="btn btn-primary">Посмотреть характеристики</a>
+                    <a href="#process" class="btn btn-ghost">Как создавался проект</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-card">
+                    <img src="C:\VACSITE\render1.jpg" alt="Модель внедорожника VAC">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="about">
+        <h2>О проекте</h2>
+        <div class="grid-3">
+            <div class="card">
+                <h3>Актуальность</h3>
+                <p>
+                    Аддитивные технологии быстро входят в промышленность, а школа не успевает готовить кадры с практическими навыками 3D‑моделирования и прототипирования. [file:1]
+                </p>
+            </div>
+            <div class="card">
+                <h3>Проблема</h3>
+                <p>
+                    Готовые конструкторы дороги и закрыты, а самодельные решения не дают методики и унификации, что усложняет системное обучение и тиражирование. [file:1]
+                </p>
+            </div>
+            <div class="card">
+                <h3>Решение</h3>
+                <p>
+                    Модульный учебный набор: полноприводный электрический внедорожник с открытыми 3D‑моделями, технологическими картами и пошаговой сборкой под школьные мастерские. [file:1]
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="specs">
+        <h2>Технические характеристики</h2>
+        <div class="grid-2">
+            <div>
+                <table class="specs-table">
+                    <tr>
+                        <th>Параметр</th>
+                        <th>Значение</th>
+                    </tr>
+                    <tr>
+                        <td>Тип модели</td>
+                        <td>Электрический полноприводный внедорожник 4WD [file:1]</td>
+                    </tr>
+                    <tr>
+                        <td>Длина модели</td>
+                        <td>Около 50–56 см (учебный масштаб) [file:1]</td>
+                    </tr>
+                    <tr>
+                        <td>Привод</td>
+                        <td>Коллекторный мотор 540‑30T на заднюю ось, полный привод через трансфер и дифференциалы [file:1]</td>
+                    </tr>
+                    <tr>
+                        <td>Рулевое управление</td>
+                        <td>Сервопривод 35 кг TiankongRK TD‑8135MG на передние колёса [file:1]</td>
+                    </tr>
+                    <tr>
+                        <td>Питание</td>
+                        <td>LiPo 11.1 V 2200 mAh 30C [file:1]</td>
+                    </tr>
+                    <tr>
+                        <td>Материал корпуса</td>
+                        <td>PLA+ пластик ESUN, диаметр 1.75 мм [file:1]</td>
+                    </tr>
+                    <tr>
+                        <td>Технология производства</td>
+                        <td>FDM‑печать, слой 0.2 мм, сопло 0.4 мм [file:1]</td>
+                    </tr>
+                    <tr>
+                        <td>Принтеры</td>
+                        <td>Picaso Designer X, FlyingBear Ghost 6 [file:1]</td>
+                    </tr>
+                    <tr>
+                        <td>Особенности</td>
+                        <td>Унифицированные посадки, внутренние каналы под проводку, модульный кузов и рама [file:1]</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="card">
+                <h3>Образовательные цели</h3>
+                <p>
+                    Проект позволяет освоить полный цикл: анализ аналогов, работа в CAD, 3D‑печать, сборка механики, подключение электроники и экономическая оценка. [file:1]
+                </p>
+                <p style="margin-top: 0.8rem;">
+                    Целевая аудитория — школьники 12–18 лет, техлицеи и центры робототехники, где важны практические STEM‑навыки и работа с современным оборудованием. [file:1]
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="process">
+        <h2>Технологический процесс</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Методы проектирования</h3>
+                <p>
+                    Использованы принципы ТРИЗ: дробление конструкции на модули, объединение механики и электроники в единый корпус и универсальность крепежа (винты М2–М3). [file:1]
+                </p>
+                <p style="margin-top: 0.8rem;">
+                    Модели созданы в Компас‑3D и Blender с соблюдением ГОСТ ЕСКД: чертежи, спецификации и сборочные единицы подготовлены для тиражирования. [file:1]
+                </p>
+            </div>
+            <div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-title">1. Анализ и эскиз</div>
+                        <div class="timeline-text">
+                            Анализ прототипов, формулировка требований, создание эскизов внедорожника и его ключевых узлов. [file:1]
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">2. 3D‑моделирование</div>
+                        <div class="timeline-text">
+                            Параметрическое моделирование деталей, разработка сборок, настройка системы посадок и унифицированных соединений. [file:1]
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">3. Печать и обработка</div>
+                        <div class="timeline-text">
+                            FDM‑печать на нескольких принтерах, удаление поддержек, шлифовка и подготовка поверхностей к сборке. [file:1]
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">4. Сборка механики</div>
+                        <div class="timeline-text">
+                            Сборка рамы, трансфера, редуктора, дифференциалов и карданов по технологическим картам. [file:1]
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">5. Электроника и испытания</div>
+                        <div class="timeline-text">
+                            Прокладка проводки во встроенные каналы, подключение мотора, сервопривода, контроллера и тестовые заезды. [file:1]
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="market">
+        <h2>Применение и маркетинг</h2>
+        <div class="grid-3">
+            <div class="card">
+                <h3>Целевая аудитория</h3>
+                <p>
+                    Школы, техлицеи, центры допобразования и клубы робототехники, где внедорожник используется как учебный стенд и платформа для соревнований и проектов. [file:1]
+                </p>
+            </div>
+            <div class="card">
+                <h3>Рынок</h3>
+                <p>
+                    Спрос на STEM‑конструкторы растет на 15–20% в год, а образовательные учреждения ищут доступные и открытые решения для модификации и кастомизации. [file:1]
+                </p>
+            </div>
+            <div class="card">
+                <h3>Форматы поставки</h3>
+                <p>
+                    Проект может поставляться как набор для самостоятельной сборки с методическим сопровождением, так и как готовая модель для соревнований и демонстраций. [file:1]
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="eco">
+        <h2>Экономическое обоснование</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Ключевые показатели</h3>
+                <div class="kpi">
+                    <div class="kpi-value">45&nbsp;523 ₽</div>
+                    <div class="kpi-label">ориентировочная себестоимость комплекта [file:1]</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-value">68&nbsp;500 ₽</div>
+                    <div class="kpi-label">расчетная цена реализации с учетом наценки и НДС [file:1]</div>
+                </div>
+                <p>
+                    В себестоимость входят материалы, электроника, печать, постобработка и амортизация оборудования, что делает проект конкурентоспособным среди учебных наборов. [file:1]
+                </p>
+            </div>
+            <div class="card">
+                <h3>Преимущества для школ</h3>
+                <p>
+                    PLA+ и массовые FDM‑принтеры снижают расходы, а открытая архитектура позволяет школам дорабатывать детали и адаптировать проект под свои задачи. [file:1]
+                </p>
+                <p style="margin-top: 0.8rem;">
+                    Готовые технологические карты, чертежи и инструкции уменьшают нагрузку на педагогов и упрощают включение комплекса в учебные программы по технологии и информатике. [file:1]
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery">
+        <h2>Галерея проекта</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="C:\VACSITE\1.jpg" alt="CAD-модель внедорожника">
+                <div class="gallery-label">CAD‑модели и сборки [file:1]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="C:\VACSITE\render1.jpg" alt="Печать деталей">
+                <div class="gallery-label">Процесс 3D‑печати деталей [file:1]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://placehold.co/600x380/020617/a78bfa?text=Assembly" alt="Сборка рамы и узлов">
+                <div class="gallery-label">Сборка рамы, редуктора и дифференциалов [file:1]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://placehold.co/600x380/020617/a78bfa?text=Finished+4WD" alt="Готовая модель внедорожника VAC">
+                <div class="gallery-label">Готовый внедорожник VAC [file:1]</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="author">
+        <h2>Автор проекта</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Торутанов Фёдор Николаевич</h3>
+                <p>
+                    Автор творческого проекта «Создание модели внедорожника средствами аддитивных технологий» в рамках Всероссийской олимпиады школьников по технологии, 2026 год. [file:1]
+                </p>
+                <p style="margin-top: 0.8rem;">
+                    Проект показывает, как школьная мастерская может стать мини‑производством с использованием CAD, FDM‑печати и современных инженерных методов. [file:1]
+                </p>
+            </div>
+            <div class="card">
+                <h3>Как использовать сайт</h3>
+                <p>
+                    Страница может быть презентацией на защите проекта, лендингом для школьного кружка или основой для веб‑портфолио с документацией и файлами моделей. [file:1]
+                </p>
+                <p style="margin-top: 0.5rem;">
+                    Замените заглушки картинок своими рендерами, фотографиями сборки и фрагментами чертежей, чтобы сайт полностью соответствовал реальному прототипу. [file:1]
+                </p>
+            </div>
+        </div>
+    </section>
+	<section id="contacts">
+    <h2>Контактные данные</h2>
+    <div class="grid-2">
+        <div class="card">
+            <h3>Автор проекта</h3>
+            <p>
+                <strong>Торутанов Фёдор Николаевич</strong> — автор творческого проекта
+                «Создание модели внедорожника средствами аддитивных технологий»
+                в рамках Всероссийской олимпиады школьников по технологии, 2026 г. [file:1]
+            </p>
+            <p style="margin-top: 0.8rem;">
+                По вопросам проекта VAC, 3D‑моделей, учебных материалов и внедрения в образовательный процесс
+                можно использовать контактные данные справа. [file:1]
+            </p>
+        </div>
+        <div class="card contact-card">
+            <h3>Связаться</h3>
+
+            <div class="contact-row">
+                <span class="contact-label">E‑mail</span>
+                <a href="mailto:torutanovfedor123@gmail.com" class="contact-value">
+                    ВАША_ПОЧТА@example.com
+                </a>
+            </div>
+
+            <div class="contact-row">
+                <span class="contact-label">Телефон</span>
+                <span class="contact-value">+7 985 479 97 86</span>
+            </div>
+
+            <div class="contact-row">
+                <span class="contact-label">Telegram</span>
+                <a href="https://t.me/satotis" class="contact-value" target="_blank">
+                    @satotis
+                </a>
+            </div>
+
+            <div class="contact-row">
+                <span class="contact-label">Город</span>
+                <span class="contact-value">Раменское, Московская область</span>
+            </div>
+            </p>
+        </div>
+    </div>
+</section>
+
+    <footer>
+        <p><strong>VAC — учебный внедорожник на аддитивных технологиях</strong></p>
+        <p>Всероссийская олимпиада школьников по технологии, 2026 г. [file:1]</p>
+    </footer>
+
+    <script>
+        const sections = document.querySelectorAll('section');
+
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.18 }
+        );
+
+        sections.forEach(section => observer.observe(section));
+    </script>
+</body>
+</html>
